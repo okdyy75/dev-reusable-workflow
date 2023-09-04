@@ -14,4 +14,4 @@ jobs:
         id: create-draft-release
         uses: okdyy75/dev-reusable-workflow/.github/actions/create-draft-release@main
         with:
-          gh-token: ${{ secrets.token }}
+          gh-token: ${{ github.token }}

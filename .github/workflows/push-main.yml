@@ -1,5 +1,11 @@
 name: Push main
 
+on:
+  workflow_call:
+    secrets:
+      token:
+        required: true
+
 jobs:
   start:
     runs-on: ubuntu-latest
@@ -8,4 +14,4 @@ jobs:
         id: create-draft-release
         uses: okdyy75/dev-reusable-workflow/.github/actions/create-draft-release@main
         with:
-          github-token: ${{ github.token }}
+          gh-token: ${{ secrets.token }}

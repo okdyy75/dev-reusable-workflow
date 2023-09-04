@@ -2,7 +2,7 @@ name: Create Draft Release
 description: Create draft release with calver tag
 
 inputs:
-  github-token:
+  gh-token:
     description: 'GitHub Token'
     required: true
 
@@ -21,7 +21,7 @@ runs:
       id: create-draft-release
       env:
         TZ: "Asia/Tokyo"
-        GH_TOKEN: ${{ inputs.github-token }}
+        GH_TOKEN: ${{ inputs.gh-token }} # gh CLI用にenvへの設定が必要
       shell: bash
       run: |
         # 最新のタグ取得

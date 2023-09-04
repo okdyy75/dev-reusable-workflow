@@ -1,0 +1,11 @@
+name: Push main
+
+jobs:
+  start:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Action create-draft-release
+        id: create-draft-release
+        uses: okdyy75/dev-reusable-workflow/.github/actions/create-draft-release@main
+        with:
+          github-token: ${{ github.token }}

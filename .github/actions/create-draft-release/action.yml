@@ -1,0 +1,51 @@
+name: Create Draft Release
+description: Create draft release with calver tag
+
+inputs:
+  github-token:
+    description: 'GitHub Token'
+    required: true
+
+outputs:
+  draft-release-link:
+    description: Create draft release link.
+    value: ${{ steps.create-draft-release.outputs.draft-release-link }}
+  draft-release-tag:
+    description: Create draft release tag.
+    value: ${{ steps.create-draft-release.outputs.draft-release-tag }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create Draft Release
+      id: create-draft-release
+      env:
+        TZ: "Asia/Tokyo"
+        GH_TOKEN: ${{ inputs.github-token }}
+      shell: bash
+      run: |
+        # 最新のタグ取得
+        latest_tag=$(gh release list --repo '${{ github.repository }}' | awk -F'\t' '$2=="Latest" { print $3 }')
+        echo "latest_tag:${latest_tag}"
+
+        # calver形式での次バージョンのタグ取得
+        next_tag=$(/bin/bash ${{ github.action_path }}/calver.sh $latest_tag)
+        echo "next_tag:${next_tag}"
+
+        # draft release取得
+        draft_tag=$(gh release list --repo '${{ github.repository }}' | awk -F'\t' '$2=="Draft" { print $3 }' | head -n 1)
+        echo "draft_tag:${draft_tag}"
+
+        # draft release が既に存在していれば、削除してから再作成（リリースノートの自動生成を使いたいため）
+        if [ "$draft_tag" != "" ]; then
+          gh release delete $draft_tag --repo '${{ github.repository }}' -y
+        fi
+        draft_release_link=$(
+          gh release create $next_tag \
+            --repo '${{ github.repository }}' \
+            --title "Release ${next_tag}" \
+            --latest --draft --generate-notes
+        )
+        echo "draft-release-link=${draft_release_link}" >> "${GITHUB_OUTPUT}"
+        echo "draft-release-tag=${next_tag}" >> "${GITHUB_OUTPUT}"
+        echo $draft_release_link

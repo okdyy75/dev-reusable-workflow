@@ -3,7 +3,7 @@ set -eu
 
 ##############################
 ## Get next calver
-## @link https://github.com/Connehito/gdp/blob/5a5e9ccec14b9d7a0462cfc6d85667add4ba5a46/format.go#L30C1-L47
+## @ref https://github.com/Connehito/gdp/blob/main/format.go
 ##############################
 today=$(date +'%Y%m%d')
 regexp="(.*)([0-9]{8})\.(.+)"

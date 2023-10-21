@@ -1,10 +1,6 @@
-name: Push main
-
+name: Create Draft Release
 on:
   workflow_call:
-    secrets:
-      token:
-        required: true
 
 jobs:
   start:
@@ -13,5 +9,3 @@ jobs:
       - name: Action create-draft-release
         id: create-draft-release
         uses: okdyy75/dev-reusable-workflow/.github/actions/create-draft-release@main
-        with:
-          gh-token: ${{ github.token }}

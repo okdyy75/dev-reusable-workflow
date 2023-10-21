@@ -24,7 +24,7 @@ runs:
         echo "latest_tag:${latest_tag}"
 
         # calver形式での次バージョンのタグ取得
-        next_tag=$(/bin/bash ${{ github.action_path }}/calver.sh $latest_tag)
+        next_tag=$(cd ${{ github.action_path }}/calver && go run . $latest_tag)
         echo "next_tag:${next_tag}"
 
         # draft release取得

@@ -27,13 +27,22 @@ runs:
         next_tag=$(/bin/bash ${{ github.action_path }}/calver.sh $latest_tag)
         echo "next_tag:${next_tag}"
 
-        # draft release取得
-        draft_tag=$(gh release list --repo '${{ github.repository }}' | awk -F'\t' '$2=="Draft" { print $3 }' | head -n 1)
+        # draft release 取得（下書きリリースノート削除にgh release deleteを使用すると、公開リリースノートと下書きリリースノートで同じtagのものが存在した場合に公開リリースノートの方が削除される可能性があるので、api経由で取得したidを使って削除する
+        # ref: https://docs.github.com/ja/free-pro-team@latest/rest/releases/releases?apiVersion=2022-11-28#list-releases
+        draft_release=$(
+          gh api '/repos/${{ github.repository }}/releases' \
+            --jq '[.[] | select(.draft == true)][0]'
+        )
+        draft_tag=$(echo $draft_release | jq -r '.tag_name')
+        draft_tag_id=$(echo $draft_release | jq -r '.id')
         echo "draft_tag:${draft_tag}"
+        echo "draft_tag_id:${draft_tag_id}"
 
         # draft release が既に存在していれば、削除してから再作成（リリースノートの自動生成を使いたいため）
-        if [ "$draft_tag" != "" ]; then
-          gh release delete $draft_tag --repo '${{ github.repository }}' -y
+        if [ "$draft_tag_id" != "" ]; then
+          gh api \
+            --method DELETE \
+            "/repos/${{ github.repository }}/releases/${draft_tag_id}"
         fi
         draft_release_link=$(
           gh release create $next_tag \

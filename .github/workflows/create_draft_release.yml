@@ -8,4 +8,4 @@ jobs:
     steps:
       - name: Action create-draft-release
         id: create-draft-release
-        uses: okdyy75/dev-reusable-workflow/.github/actions/create-draft-release@main
+        uses: okdyy75/dev-reusable-workflow/.github/actions/create-draft-release@fix-create-draft-release

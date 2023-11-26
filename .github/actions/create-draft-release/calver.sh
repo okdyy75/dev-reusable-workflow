@@ -11,7 +11,7 @@ regexp="(.*)([0-9]{8})\.(.+)"
 version=${1:-$today}
 
 if [[ $version =~ $regexp ]]; then
-    if [ "$today" = "${BASH_REMATCH[2]}" ]; then
+    if [[ $today = ${BASH_REMATCH[2]} ]]; then
         minor=${BASH_REMATCH[3]}
         next=$(($minor + 1))
         echo "${BASH_REMATCH[1]}${today}.${next}"
